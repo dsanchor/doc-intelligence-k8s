@@ -61,8 +61,12 @@ Get status:
 curl http://$SVC_IP/status
 ```
 
+![Status](status.png)
+
 Is ready:
 
 ```bash
 curl http://$SVC_IP/ready
 ```
+
+![Readinnes](ready.png)
