@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: general-document
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: general-document
+  template:
+    metadata:
+      labels:
+        app: general-document
+    spec:
+      containers:
+        - name: general-document
+          image: mcr.microsoft.com/azure-cognitive-services/form-recognizer/document-3.0
+          env:
+            - name: EULA
+              value: "accept"
+            - name: billing
+              value: $BILLING_ENDPOINT
+            - name: apiKey
+              value: $API_KEY
+            - name: AzureCognitiveServiceLayoutHost
+              value: http://layout:5000
+          ports:
+            - containerPort: 5050
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: general-document
+spec:
+  type: LoadBalancer
+  selector:
+    app: general-document
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5050
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: layout
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: layout
+  template:
+    metadata:
+      labels:
+        app: layout
+    spec:
+      containers:
+        - name: layout
+          image: mcr.microsoft.com/azure-cognitive-services/form-recognizer/layout-3.0
+          env:
+            - name: EULA
+              value: "accept"
+            - name: billing
+              value: $BILLING_ENDPOINT
+            - name: apiKey
+              value: $API_KEY
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: layout
+spec:
+  type: ClusterIP
+  selector:
+    app: layout
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: doc-intelligence
+  name: doc-intelligence-read
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: doc-intelligence
+      app: doc-intelligence-read
   template:
     metadata:
       labels:
-        app: doc-intelligence
+        app: doc-intelligence-read
     spec:
       containers:
-        - name: doc-intelligence
+        - name: doc-intelligence-read
           image: mcr.microsoft.com/azure-cognitive-services/form-recognizer/read-3.0
           env:
             - name: EULA
@@ -28,11 +28,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: doc-intelligence
+  name: doc-intelligence-read
 spec:
   type: LoadBalancer
   selector:
-    app: doc-intelligence
+    app: doc-intelligence-read
   ports:
     - protocol: TCP
       port: 80
